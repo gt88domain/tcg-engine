@@ -1,0 +1,266 @@
+// Version: 1.0.0
+type AbilityEffect__12053885 =
+  {
+    #Counter;
+    #CustomEffect : Text;
+    #DealDamage : Nat;
+    #Destroy;
+    #DrawCards : Nat;
+    #GainResources : Nat;
+    #GiveKeyword : Text;
+    #HealLife : Nat;
+    #ReturnToHand;
+    #StatBoostUntilEOT : (Int, Int);
+    #StatReduceUntilEOT : (Int, Int)
+  };
+type AbilityTarget__579761733 =
+  {
+    #AllCreatures;
+    #AllOpponentCreatures;
+    #AllYourCreatures;
+    #NoTarget;
+    #Opponent;
+    #TargetCreature;
+    #TargetPlayer;
+    #ThisCard;
+    #You
+  };
+type AbilityTrigger__533748282 =
+  {
+    #Activated;
+    #Attacks;
+    #DealsDamage;
+    #Destroyed;
+    #EndOfTurn;
+    #EnterPlay;
+    #Passive;
+    #StartOfTurn
+  };
+type Ability__189124498 =
+  {
+    abilityType : {#freeform; #structured};
+    conditionText : ?Text;
+    effects : [AbilityEffect__12053885];
+    id : Nat;
+    name : Text;
+    rulesText : ?Text;
+    targets : [AbilityTarget__579761733];
+    trigger : ?AbilityTrigger__533748282
+  };
+type CardId__255751681 = Nat;
+type CardInPlay__328997665 =
+  {
+    baseAttack : Nat;
+    baseDefense : Nat;
+    cardId : CardId__255751681;
+    instanceId : Nat;
+    summonSick : Bool;
+    tapped : Bool;
+    tempBuffAttack : Int;
+    tempBuffDefense : Int
+  };
+type CardTypeDefinition__638128829 =
+  {id : Text; name : Text; staysInPlay : Bool};
+type Card__176127365 =
+  {
+    abilities : [Ability__189124498];
+    artUrl : ?Text;
+    attack : ?Nat;
+    cardType : Text;
+    cost : Nat;
+    createdAt : Timestamp__876471016;
+    defense : ?Nat;
+    flavourText : ?Text;
+    gameId : GameId__75596002;
+    id : CardId__255751681;
+    name : Text;
+    rulesText : ?Text;
+    tags : [Text];
+    updatedAt : Timestamp__876471016
+  };
+type CombatSubPhase__81897215 =
+  {#AssigningBlockers : {attackers : [Nat]}; #DeclaringAttackers; #Idle};
+type Data__80296667<K, V> =
+  {var count : Nat__1040412405; kvs : [var ?(K, V)]};
+type DeckEntry__898324847 = {cardId : CardId__255751681; count : Nat};
+type DeckId__108936846 = Nat;
+type Deck__8224456 =
+  {
+    cards : [DeckEntry__898324847];
+    createdAt : Timestamp__876471016;
+    gameId : GameId__75596002;
+    id : DeckId__108936846;
+    isPublished : Bool;
+    isStarterDeck : Bool;
+    name : Text;
+    ownerId : UserId__245176137;
+    updatedAt : Timestamp__876471016
+  };
+type EndCondition__689634269 = {#Concede; #Forfeit; #HealthZero};
+type GameDefinition__689708158 =
+  {
+    cardTypeDefinitions : [CardTypeDefinition__638128829];
+    cardTypes : [Text];
+    createdAt : Timestamp__876471016;
+    designerPrincipal : UserId__245176137;
+    gameDescription : Text;
+    gameIcon : Text;
+    gameName : Text;
+    id : GameId__75596002;
+    keywords : [KeywordDefinition__311519901];
+    name : Text;
+    publishedAt : ?Timestamp__876471016;
+    resourceSystem : ResourceSystem__485619407;
+    themeColor : Text;
+    turnPhases : [TurnPhase__357722043];
+    turnStructure : TurnStructure__952074640;
+    updatedAt : Timestamp__876471016;
+    version : Nat;
+    visibility : GameVisibility__349931991;
+    winConditions : [WinCondition__847048815];
+    wizardStep : Nat
+  };
+type GameId__75596002 = Nat;
+type GameLogEntry__786907285 =
+  {
+    actionType : Text;
+    actorId : ?Text;
+    description : Text;
+    phaseSnapshot : ?GamePhase__1033804316;
+    targetId : ?Text;
+    timestamp : Timestamp__876471016
+  };
+type GamePhase__1033804316 = {#Combat; #Draw; #End; #Main; #Start};
+type GameResult__691596391 =
+  {
+    completedAt : Timestamp__876471016;
+    endCondition : EndCondition__689634269;
+    finalTurn : Nat;
+    loserId : UserId__245176137;
+    winnerId : UserId__245176137
+  };
+type GameSessionId__795628030 = Nat;
+type GameSession__245935655 =
+  {
+    endedAt : ?Timestamp__876471016;
+    gameId : GameId__75596002;
+    guestId : ?UserId__245176137;
+    hostId : UserId__245176137;
+    id : GameSessionId__795628030;
+    inviteCode : Text;
+    log : [GameLogEntry__786907285];
+    result : ?GameResult__691596391;
+    startedAt : ?Timestamp__876471016;
+    state : GameState__373470856
+  };
+type GameState__373470856 =
+  {
+    activePlayerId : UserId__245176137;
+    combatSubPhase : CombatSubPhase__81897215;
+    phase : GamePhase__1033804316;
+    playerStates : [PlayerGameState__35196427];
+    status : GameStatus__543256130;
+    turn : Nat
+  };
+type GameStatus__543256130 =
+  {#Abandoned; #Completed; #InProgress; #WaitingForPlayer};
+type GameVersionSnapshot__553817007 =
+  {
+    description : Text;
+    gameDefinition : GameDefinition__689708158;
+    timestamp : Timestamp__876471016
+  };
+type GameVisibility__349931991 = {#InviteOnly; #Open; #Private};
+type Internal__41346355<K, V> =
+  {children : [var ?Node__1000929467<K, V>]; data : Data__80296667<K, V>};
+type InviteLink__145202895 =
+  {
+    code : Text;
+    createdBy : UserId__245176137;
+    expiresAt : ?Timestamp__876471016;
+    gameId : GameId__75596002;
+    usedBy : [Text]
+  };
+type KeywordDefinition__311519901 =
+  {id : Text; name : Text; rulesDescription : Text};
+type Leaf__712614010<K, V> = {data : Data__80296667<K, V>};
+type Map__222667396<K, V> = Map__912772452<K, V>;
+type Map__709709801<K, V> =
+  {var root : Node__1000929467<K, V>; var size : Nat__1040412405};
+type Map__912772452<K, V> = Map__709709801<K, V>;
+type MulliganState__27706423 = {taken : Bool};
+type Nat__1040412405 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__1000929467<K, V> =
+  {#internal : Internal__41346355<K, V>; #leaf : Leaf__712614010<K, V>};
+type PlayerAccount__336587668 =
+  {
+    gameId : GameId__75596002;
+    joinedAt : Timestamp__876471016;
+    principal : UserId__245176137;
+    record : PlayerRecord__801588131;
+    role : Role__789929171;
+    username : ?Text
+  };
+type PlayerGameState__35196427 =
+  {
+    graveyard : [CardInPlay__328997665];
+    hand : [CardId__255751681];
+    hasPlayedResource : Bool;
+    health : Nat;
+    library : [CardId__255751681];
+    mulliganState : MulliganState__27706423;
+    playArea : [CardInPlay__328997665];
+    playerId : UserId__245176137;
+    resources : [(Text, Nat)]
+  };
+type PlayerRecord__801588131 = {gamesPlayed : Nat; losses : Nat; wins : Nat};
+type ResourceSystem__485619407 =
+  {
+    copiesPerCardLimit : Nat;
+    deckSizeMax : Nat;
+    deckSizeMin : Nat;
+    maxHandSize : Nat;
+    resourceName : Text;
+    resourcesPerTurn : Nat;
+    startingLife : Nat
+  };
+type Role__789929171 =
+  {#CoDesigner; #Owner; #Player; #Playtester; #Spectator};
+type Timestamp__876471016 = Int;
+type TurnPhase__357722043 =
+  {description : Text; id : Text; name : Text; order : Nat};
+type TurnStructure__952074640 = {phases : [GamePhase__1033804316]};
+type UserId__245176137 = Principal;
+type WinCondition__847048815 = {#Custom : Text; #DeckOut; #LifeToZero};
+actor {
+  stable cardUseLog :
+    {
+      var root : Node__1000929467<CardId__255751681, (Nat, Nat)>;
+      var size : Nat__1040412405
+    };
+  stable completedResults :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?GameResult__691596391]];
+      var elementIndex : Nat__1040412405
+    };
+  stable gameSessions :
+    {
+      var root :
+        Node__1000929467<GameSessionId__795628030, GameSession__245935655>;
+      var size : Nat__1040412405
+    };
+  stable sessionState : {var nextSessionId : Nat};
+  stable state :
+    {
+      cardCounter : {var next : Nat};
+      cards : Map__222667396<CardId__255751681, Card__176127365>;
+      deckCounter : {var next : Nat};
+      decks : Map__222667396<DeckId__108936846, Deck__8224456>;
+      var gameDefinition : ?GameDefinition__689708158;
+      var gameVersionHistory : [GameVersionSnapshot__553817007];
+      inviteLinks : Map__222667396<Text, InviteLink__145202895>;
+      players : Map__222667396<Text, PlayerAccount__336587668>
+    }
+};

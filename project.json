@@ -1,0 +1,20 @@
+{
+  "overview": "A self-sovereign platform for designing and playing your own trading card game online — design cards, build decks, enforce rules, and let anyone play via invite link.",
+  "features": [
+    "Full game rules editor — resource system, card types, win conditions, turn structure, keywords",
+    "Structured card ability builder — 8 triggers, 9 targets, 12 effects with live card preview",
+    "Deck builder with live analysis — cost curve, type/role distribution, format validation",
+    "Rule-enforced online play — only legal moves, auto-resolve abilities, win detection",
+    "Private 1v1 via invite link or join code",
+    "First-run wizard for new designers — 5-step guided setup"
+  ],
+  "category": "game",
+  "tags": [
+    "trading-card-game",
+    "game-design",
+    "multiplayer",
+    "deck-builder",
+    "self-sovereign"
+  ],
+  "last_updated": "2026-05-31T06:14:42.422Z"
+}

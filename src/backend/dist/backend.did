@@ -1,0 +1,491 @@
+type WinCondition = 
+ variant {
+   Custom: text;
+   DeckOut;
+   LifeToZero;
+ };
+type UserId = principal;
+type TurnStructure = record {phases: vec GamePhase;};
+type TurnPhase = 
+ record {
+   description: text;
+   id: text;
+   name: text;
+   order: nat;
+ };
+type Timestamp = int;
+type Role = 
+ variant {
+   CoDesigner;
+   Owner;
+   Player;
+   Playtester;
+   Spectator;
+ };
+type ResourceSystem = 
+ record {
+   copiesPerCardLimit: nat;
+   deckSizeMax: nat;
+   deckSizeMin: nat;
+   maxHandSize: nat;
+   resourceName: text;
+   resourcesPerTurn: nat;
+   startingLife: nat;
+ };
+type PlayerRecord = 
+ record {
+   gamesPlayed: nat;
+   losses: nat;
+   wins: nat;
+ };
+type PlayerGameState = 
+ record {
+   graveyard: vec CardInPlay;
+   hand: vec CardId;
+   hasPlayedResource: bool;
+   health: nat;
+   library: vec CardId;
+   mulliganState: MulliganState;
+   playArea: vec CardInPlay;
+   playerId: UserId;
+   resources: vec record {
+                    text;
+                    nat;
+                  };
+ };
+type PlayerAccount = 
+ record {
+   gameId: GameId;
+   joinedAt: Timestamp;
+   "principal": UserId;
+   "record": PlayerRecord;
+   role: Role;
+   username: opt text;
+ };
+type MulliganState = record {taken: bool;};
+type KeywordDefinition = 
+ record {
+   id: text;
+   name: text;
+   rulesDescription: text;
+ };
+type InviteLink = 
+ record {
+   code: text;
+   createdBy: UserId;
+   expiresAt: opt Timestamp;
+   gameId: GameId;
+   usedBy: vec text;
+ };
+type GameVisibility = 
+ variant {
+   InviteOnly;
+   Open;
+   Private;
+ };
+type GameVersionSnapshot = 
+ record {
+   description: text;
+   gameDefinition: GameDefinition;
+   timestamp: Timestamp;
+ };
+type GameStatus = 
+ variant {
+   Abandoned;
+   Completed;
+   InProgress;
+   WaitingForPlayer;
+ };
+type GameStats = 
+ record {
+   activePlayers: nat;
+   cardWinRates: vec CardUsageStat;
+   gamesPlayed: nat;
+   recentGames: vec GameResult;
+ };
+type GameState = 
+ record {
+   activePlayerId: UserId;
+   combatSubPhase: CombatSubPhase;
+   phase: GamePhase;
+   playerStates: vec PlayerGameState;
+   status: GameStatus;
+   turn: nat;
+ };
+type GameSessionId = nat;
+type GameSession = 
+ record {
+   endedAt: opt Timestamp;
+   gameId: GameId;
+   guestId: opt UserId;
+   hostId: UserId;
+   id: GameSessionId;
+   inviteCode: text;
+   log: vec GameLogEntry;
+   result: opt GameResult;
+   startedAt: opt Timestamp;
+   state: GameState;
+ };
+type GameResult = 
+ record {
+   completedAt: Timestamp;
+   endCondition: EndCondition;
+   finalTurn: nat;
+   loserId: UserId;
+   winnerId: UserId;
+ };
+type GamePhase = 
+ variant {
+   Combat;
+   Draw;
+   End;
+   Main;
+   Start;
+ };
+type GameLogEntry = 
+ record {
+   actionType: text;
+   actorId: opt text;
+   description: text;
+   phaseSnapshot: opt GamePhase;
+   targetId: opt text;
+   timestamp: Timestamp;
+ };
+type GameId = nat;
+type GameDefinition = 
+ record {
+   cardTypeDefinitions: vec CardTypeDefinition;
+   cardTypes: vec text;
+   createdAt: Timestamp;
+   designerPrincipal: UserId;
+   gameDescription: text;
+   gameIcon: text;
+   gameName: text;
+   id: GameId;
+   keywords: vec KeywordDefinition;
+   name: text;
+   publishedAt: opt Timestamp;
+   resourceSystem: ResourceSystem;
+   themeColor: text;
+   turnPhases: vec TurnPhase;
+   turnStructure: TurnStructure;
+   updatedAt: Timestamp;
+   version: nat;
+   visibility: GameVisibility;
+   winConditions: vec WinCondition;
+   wizardStep: nat;
+ };
+type EndCondition = 
+ variant {
+   Concede;
+   Forfeit;
+   HealthZero;
+ };
+type DeckValidation = 
+ record {
+   deckSize: nat;
+   errors: vec text;
+   isValid: bool;
+ };
+type DeckId = nat;
+type DeckEntry = 
+ record {
+   cardId: CardId;
+   count: nat;
+ };
+type Deck = 
+ record {
+   cards: vec DeckEntry;
+   createdAt: Timestamp;
+   gameId: GameId;
+   id: DeckId;
+   isPublished: bool;
+   isStarterDeck: bool;
+   name: text;
+   ownerId: UserId;
+   updatedAt: Timestamp;
+ };
+type DashboardData = 
+ record {
+   cardCount: nat;
+   playerCount: nat;
+   stats: GameStats;
+ };
+type CombatSubPhase = 
+ variant {
+   AssigningBlockers: record {attackers: vec nat;};
+   DeclaringAttackers;
+   Idle;
+ };
+type CardUsageStat = 
+ record {
+   cardId: CardId;
+   uses: nat;
+   wins: nat;
+ };
+type CardTypeDefinition = 
+ record {
+   id: text;
+   name: text;
+   staysInPlay: bool;
+ };
+type CardInPlay = 
+ record {
+   baseAttack: nat;
+   baseDefense: nat;
+   cardId: CardId;
+   instanceId: nat;
+   summonSick: bool;
+   tapped: bool;
+   tempBuffAttack: int;
+   tempBuffDefense: int;
+ };
+type CardId = nat;
+type Card = 
+ record {
+   abilities: vec Ability;
+   artUrl: opt text;
+   attack: opt nat;
+   cardType: text;
+   cost: nat;
+   createdAt: Timestamp;
+   defense: opt nat;
+   flavourText: opt text;
+   gameId: GameId;
+   id: CardId;
+   name: text;
+   rulesText: opt text;
+   tags: vec text;
+   updatedAt: Timestamp;
+ };
+type AbilityTrigger = 
+ variant {
+   Activated;
+   Attacks;
+   DealsDamage;
+   Destroyed;
+   EndOfTurn;
+   EnterPlay;
+   Passive;
+   StartOfTurn;
+ };
+type AbilityTarget = 
+ variant {
+   AllCreatures;
+   AllOpponentCreatures;
+   AllYourCreatures;
+   NoTarget;
+   Opponent;
+   TargetCreature;
+   TargetPlayer;
+   ThisCard;
+   You;
+ };
+type AbilityEffect = 
+ variant {
+   Counter;
+   CustomEffect: text;
+   DealDamage: nat;
+   Destroy;
+   DrawCards: nat;
+   GainResources: nat;
+   GiveKeyword: text;
+   HealLife: nat;
+   ReturnToHand;
+   StatBoostUntilEOT: record {
+                        int;
+                        int;
+                      };
+   StatReduceUntilEOT: record {
+                         int;
+                         int;
+                       };
+ };
+type Ability = 
+ record {
+   abilityType: variant {
+                  freeform;
+                  structured;
+                };
+   conditionText: opt text;
+   effects: vec AbilityEffect;
+   id: nat;
+   name: text;
+   rulesText: opt text;
+   targets: vec AbilityTarget;
+   trigger: opt AbilityTrigger;
+ };
+service : {
+  assignBlockers: (sessionId: GameSessionId, blockingInstanceIds: vec nat) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  concedeGame: (sessionId: GameSessionId) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  createCard: (req:
+   record {
+     abilities: vec Ability;
+     artUrl: opt text;
+     attack: opt nat;
+     cardType: text;
+     cost: nat;
+     defense: opt nat;
+     flavourText: opt text;
+     name: text;
+     rulesText: opt text;
+     tags: vec text;
+   }) -> (variant {
+            err: text;
+            ok: Card;
+          });
+  createDeck: (gameId: GameId, name: text, cards: vec DeckEntry) ->
+   (variant {
+      err: text;
+      ok: Deck;
+    });
+  createGame: (name: text, theme: text) ->
+   (variant {
+      err: text;
+      ok: GameDefinition;
+    });
+  createGameSession: (gameId: GameId, inviteCode: text) -> (GameSession);
+  createInviteLink: (gameId: GameId) -> (InviteLink);
+  declareAttackers: (sessionId: GameSessionId, attackerIndices: vec nat) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  deleteCard: (id: CardId) -> (variant {
+                                 err: text;
+                                 ok;
+                               });
+  deleteDeck: (id: DeckId) -> (variant {
+                                 err: text;
+                                 ok;
+                               });
+  discardCard: (sessionId: GameSessionId, handIndex: nat) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  drawCard: (sessionId: GameSessionId) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  endPhase: (sessionId: GameSessionId) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  getCard: (id: CardId) -> (opt Card) query;
+  getDashboardData: () -> (DashboardData) query;
+  getDeck: (id: DeckId) -> (opt Deck) query;
+  getGame: () -> (opt GameDefinition) query;
+  getGameLog: (sessionId: GameSessionId) -> (vec GameLogEntry) query;
+  getGameSession: (sessionId: GameSessionId) -> (opt GameSession) query;
+  getGameStats: () -> (GameStats) query;
+  getGameVersionHistory: () -> (vec GameVersionSnapshot) query;
+  getInviteLink: (code: text) -> (opt InviteLink) query;
+  getPlayer: ("principal": principal) -> (opt PlayerAccount) query;
+  initGameState: (sessionId: GameSessionId, hostDeckCards: vec Card,
+   guestDeckCards: vec Card, gameDefinition: GameDefinition) -> (GameSession);
+  joinGameSession: (sessionId: GameSessionId) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  listCards: (gameId: GameId) -> (vec Card) query;
+  listDecks: (ownerId: opt UserId, gameId: GameId) -> (vec Deck) query;
+  listInviteLinks: (gameId: GameId) -> (vec InviteLink) query;
+  listPlayers: (gameId: GameId) -> (vec PlayerAccount) query;
+  playCard: (sessionId: GameSessionId, cardId: CardId, card: Card) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  publishGame: (visibility: GameVisibility) ->
+   (variant {
+      err: text;
+      ok: GameDefinition;
+    });
+  registerPlayer: ("principal": principal, gameId: GameId, role: Role,
+   username: opt text) -> (PlayerAccount);
+  saveGameVersion: (description: text) -> ();
+  setStarterDeck: (id: DeckId) -> (variant {
+                                     err: text;
+                                     ok;
+                                   });
+  takeMulligan: (sessionId: GameSessionId) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  unpublishGame: () -> (variant {
+                          err: text;
+                          ok: GameDefinition;
+                        });
+  updateCard: (id: CardId, req:
+   record {
+     abilities: opt vec Ability;
+     artUrl: opt opt text;
+     attack: opt opt nat;
+     cardType: opt text;
+     cost: opt nat;
+     defense: opt opt nat;
+     flavourText: opt opt text;
+     name: opt text;
+     rulesText: opt opt text;
+     tags: opt vec text;
+   }) -> (variant {
+            err: text;
+            ok: Card;
+          });
+  updateDeck: (id: DeckId, name: opt text, cards: opt vec DeckEntry) ->
+   (variant {
+      err: text;
+      ok: Deck;
+    });
+  updateGame: (updates:
+   record {
+     cardTypeDefinitions: opt vec CardTypeDefinition;
+     gameDescription: opt text;
+     gameIcon: opt text;
+     gameName: opt text;
+     keywords: opt vec KeywordDefinition;
+     resourceSystem: opt ResourceSystem;
+     themeColor: opt text;
+     turnPhases: opt vec TurnPhase;
+     winConditions: opt vec WinCondition;
+     wizardStep: opt nat;
+   }) -> (variant {
+            err: text;
+            ok: GameDefinition;
+          });
+  updatePlayerRecord: ("principal": principal, won: bool) -> ();
+  updatePlayerRole: (targetPrincipal: principal, newRole: Role) ->
+   (variant {
+      err: text;
+      ok: PlayerAccount;
+    });
+  updateWizardStep: (step: nat) -> (variant {
+                                      err: text;
+                                      ok;
+                                    });
+  useAbility: (sessionId: GameSessionId, sourceInstanceId: nat, abilityId:
+   nat, targetInstanceId: opt nat, effects: vec AbilityEffect) ->
+   (variant {
+      err: text;
+      ok: GameSession;
+    });
+  useInviteLink: (code: text) -> (variant {
+                                    err: text;
+                                    ok: InviteLink;
+                                  });
+  validateDeck: (gameId: GameId, cards: vec DeckEntry) ->
+   (DeckValidation) query;
+}
